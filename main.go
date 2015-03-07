@@ -8,11 +8,18 @@ import (
 	"os"
 )
 
+type buff []byte
+type jobj map[string]interface{}
+
 func main() {
 	defer func() {
 		logError(recover())
 	}()
-	fmt.Printf("%s\n", format(unmarshal(readInput())))
+	fmt.Printf("%s\n", readBuff().unmarshal().format())
+}
+
+func readBuff() buff {
+	return buff(readInput())
 }
 
 func readInput() (buf []byte) {
@@ -21,6 +28,14 @@ func readInput() (buf []byte) {
 		panic(err)
 	}
 	return
+}
+
+func (buf buff) unmarshal() jobj {
+	return jobj(unmarshal([]byte(buf)))
+}
+
+func (j jobj) format() string {
+	return format(j)
 }
 
 func unmarshal(buf []byte) (data map[string]interface{}) {
